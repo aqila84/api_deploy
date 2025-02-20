@@ -28,11 +28,17 @@ class UserBase(BaseModel):
     Job: str
     UserRoleID: int
 
+class UserUpdateAddress(BaseModel):
+    Address: str
+
 class UserCreate(UserBase):
     pass
 
 class UserUpdate(UserBase):
     pass
+
+class UserUpdateJob(BaseModel):
+    Job: str
 
 class UserResponse(UserBase):
     UserID: UUID
