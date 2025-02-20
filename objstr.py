@@ -2,15 +2,10 @@ from fastapi.responses import FileResponse, StreamingResponse
 from minio import Minio
 from fastapi import *
 import mimetypes
-from dotenv import *
-import os
+from database import client
 
-load_dotenv()
-
-client = Minio(endpoint=os.getenv("MINIO_ENDPOINT"), access_key=os.getenv("MINIO_ACCESS_KEY"), secret_key=os.getenv("MINIO_SECRET_KEY"), secure=False)
-
-def upload_document_path(bucket_name:str, object_name:str, file_name, content_type:str):
-    return client.fput_object(bucket_name, object_name, file_name, content_type)
+# def upload_document_path(bucket_name:str, object_name:str, file_name, content_type:str):
+#     return client.fput_object(bucket_name, object_name, file_name, content_type)
 
 async def upload_document(bucket_name:str, file:UploadFile):
     file_content = await file.read()
