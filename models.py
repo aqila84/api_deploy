@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Text, ForeignKey, Float, DateTim
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, ForeignKey, UUID, Boolean
+import bcrypt
 
 Base = declarative_base()
 
@@ -15,8 +16,10 @@ class User(Base):
     Address = Column(String(200))
     Job = Column(String(100))
     UserRoleID = Column(Integer(), ForeignKey("userrole.UserRoleID"))
+    HospitalID = Column(Integer(), ForeignKey("hospital.HospitalID"))
     
     userrole = relationship("UserRole", back_populates="user")
+    hospital = relationship("Hospital", back_populates="user")
     
 class UserRole(Base):
     __tablename__ = "userrole" 
@@ -26,4 +29,55 @@ class UserRole(Base):
     
     # Back-reference to user
     user = relationship("User", back_populates="userrole")
+
+class Hospital(Base):
+    __tablename__ = "hospital"
+
+    HospitalID = Column(Integer(), primary_key=True)
+    HospitalName = Column(String(50))
+    Address = Column(String(100))
+    TTEQuota = Column(Integer())
+    UsedTTEQuota = Column(Integer())
     
+    user = relationship("User", back_populates="hospital")
+    staff = relationship("Staff", back_populates="hospital")
+
+class Staff(Base):
+    __tablename__ = "staff"
+
+    StaffID = Column(Integer(), primary_key=True)
+    Name = Column(String(50))
+    Contact = Column(Integer())
+    Email = Column(String(50))
+    Password = Column(String(255))
+    HospitalID = Column(Integer(), ForeignKey("hospital.HospitalID"))
+    StaffRoleID = Column(Integer(), ForeignKey("staffrole.StaffRoleID"))
+
+    hospital = relationship("Hospital", back_populates="staff")
+    staffrole = relationship("StaffRole", back_populates="staff")
+    log = relationship("Log", back_populates="staff", cascade="all, delete")
+
+    def set_password(self, plain_password: str):
+        salt = bcrypt.gensalt()
+        self.Password = bcrypt.hashpw(plain_password.encode(), salt).decode()
+
+    def check_password(self, plain_password: str) -> bool:
+        return bcrypt.checkpw(plain_password.encode(), self.Password.encode())
+
+class StaffRole(Base):
+    __tablename__ = "staffrole"
+
+    StaffRoleID = Column(Integer(), primary_key=True)
+    StaffRoleName = Column(String(20))
+
+    staff = relationship("Staff", back_populates="staffrole")
+
+class Log(Base):
+    __tablename__ = "log"
+
+    LogID = Column(Integer(), primary_key=True)
+    Action = Column(String(100))
+    Timestamp = Column(DateTime)
+    StaffID = Column(Integer(), ForeignKey("staff.StaffID"))
+
+    staff = relationship("Staff", back_populates="log")
