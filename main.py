@@ -155,7 +155,7 @@ def delete_hospital_by_name(HospitalName:str, db: Session = Depends(get_db)):
     return {"message": "Hospital Successfully Deleted"}
 
 #Staff
-@app.post("/staff/post", response_model=schemas.StaffBase, tags=["Staff"])
+@app.post("/staff/post", response_model=schemas.StaffResponse, tags=["Staff"])
 def create_staff(staff:schemas.StaffCreate, db: Session = Depends(get_db)):
     return crud.create_staff(db, staff)
 
@@ -181,18 +181,47 @@ def delete_staff_by_name(Name:str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Staff not found")
     return {"message": "Staff Successfully Deleted"}
 
+#staffrole
+@app.post("/staffrole/post", response_model=schemas.StaffRoleResponse, tags=["StaffRole"])
+def create_staff_role(staffrole: schemas.StaffRoleCreate, db: Session = Depends(get_db)):
+    return crud.create_staff_role(db, staffrole)
+
+@app.get("/staffrole/get", response_model=list[schemas.StaffRoleResponse], tags=["StaffRole"])
+def get_all_staff_roles(db: Session = Depends(get_db)):
+    return crud.get_all_staff_roles(db)
+
+@app.get("/staffrole/get/{StaffRoleID}", response_model=schemas.StaffRoleResponse, tags=["StaffRole"])
+def get_staff_role_by_id(StaffRoleID: int, db: Session = Depends(get_db)):
+    staffrole = crud.get_staff_role_by_id(db, StaffRoleID)
+    if not staffrole:
+        raise HTTPException(status_code=404, detail="StaffRole not found")
+    return staffrole
+
+@app.put("/staffrole/update/{StaffRoleID}", response_model=schemas.StaffRoleResponse, tags=["StaffRole"])
+def update_staff_role_by_id(StaffRoleID: int, staffrole_update: schemas.StaffRoleCreate, db: Session = Depends(get_db)):
+    updated_role = crud.update_staff_role_by_id(db, StaffRoleID, staffrole_update)
+    if not updated_role:
+        raise HTTPException(status_code=404, detail="StaffRole not found")
+    return updated_role
+
+@app.delete("/staffrole/delete", tags=["StaffRole"])
+def delete_staff_role_by_name(StaffRoleName: str, db: Session = Depends(get_db)):
+    deleted_role = crud.delete_staff_role_by_name(db, StaffRoleName)
+    if not deleted_role:
+        raise HTTPException(status_code=404, detail="StaffRole not found")
+    return {"message": "StaffRole successfully deleted"}
 
 # Minio File
-@app.post("/uploadfile", tags=["File"])
-def upload_file(file: UploadFile):
-    upload_document("documents", file)    
-    return {"message":"Upload Successful!"}
+# @app.post("/uploadfile", tags=["File"])
+# def upload_file(file: UploadFile):
+#     upload_document("documents", file)    
+#     return {"message":"Upload Successful!"}
 
-@app.get("/getfile", tags=["File"])
-def get_file(object_name:str):
-    return get_document("documents", object_name)
+# @app.get("/getfile", tags=["File"])
+# def get_file(object_name:str):
+#     return get_document("documents", object_name)
 
-@app.delete("/deletefile", tags=["File"])
-def delete_file(object_name:str):
-    return delete_document("documents", object_name)
+# @app.delete("/deletefile", tags=["File"])
+# def delete_file(object_name:str):
+#     return delete_document("documents", object_name)
 

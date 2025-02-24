@@ -190,5 +190,34 @@ def delete_staff_by_name(db: Session, Name:str):
         return True
     return False
 
+#staffrole
+def create_staff_role(db: Session, staffrole: schemas.StaffRoleCreate):
+    new_role = models.StaffRole(**staffrole.model_dump())
+    db.add(new_role)
+    db.commit()
+    db.refresh(new_role)
+    return new_role
 
+def get_all_staff_roles(db: Session):
+    return db.query(models.StaffRole).all()
+
+def get_staff_role_by_id(db: Session, StaffRoleID: int):
+    return db.query(models.StaffRole).filter(models.StaffRole.StaffRoleID == staff_role_id).first()
+
+def update_staff_role_by_id(db: Session, StaffRoleID: int, staffrole_update: schemas.StaffRoleCreate):
+    staffrole = db.query(models.StaffRole).filter(models.StaffRole.StaffRoleID == StaffRoleID).first()
+    if not staffrole:
+        return None
+    staffrole.StaffRoleName = staffrole_update.StaffRoleName
+    db.commit()
+    db.refresh(staffrole)
+    return staffrole
+
+def delete_staff_role_by_name(db: Session, StaffRoleName: str):
+    staffrole = db.query(models.StaffRole).filter(models.StaffRole.StaffRoleName == StaffRoleName).first()
+    if not staffrole:
+        return None
+    db.delete(staffrole)
+    db.commit()
+    return staffrole
  
