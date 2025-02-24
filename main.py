@@ -1,4 +1,5 @@
 from requests import Session
+from Routes import role
 from database import SessionLocal
 from objstr import *
 from fastapi import FastAPI, File, UploadFile
@@ -31,7 +32,7 @@ def get_db():
         
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:8000"],
+    allow_origins=["http://localhost:5173", "http://localhost:8000", "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -60,6 +61,8 @@ def update_hospital():
 @app.patch("/patch/hospital") # Satu Update
 def patch_hospital():
     return {"message": "Update Hospital"}
+
+app.include_router(role.router, tags=["User Role"])
 
 
 # @app.post('/user/post', response_model=schemas.UserBase, tags=["Users"])

@@ -35,8 +35,6 @@ def delete_user_role_by_name(db: Session, UserRoleName:str):
         return True
     return False
 
-# * -> .all()
-
 def get_user_role(db:Session):
     return db.query(models.UserRole).all()
 
