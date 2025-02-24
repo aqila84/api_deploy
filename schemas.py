@@ -79,6 +79,9 @@ class StaffCreate(StaffBase):
     Password: str
     HospitalID: int
 
+class StaffUpdate(StaffBase):
+    pass
+
 class StaffResponse(StaffBase):
     StaffID: int
     HospitalID: int

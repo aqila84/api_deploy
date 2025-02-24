@@ -133,6 +133,7 @@ def update_hospital_by_name(db: Session, HospitalName:str, hospital_update: sche
     db.refresh(hospital)
 
     return hospital
+  
 
 def delete_hospital_by_name(db: Session, HospitalName:str):
     db_hospital = db.query(models.hospital).filter(models.Hospital.HospitalName == HospitalName).first()
@@ -141,7 +142,44 @@ def delete_hospital_by_name(db: Session, HospitalName:str):
         db.commit()
         return True
     return False
+
+
+#staff
+def create_staff(db: Session, staff: schemas.StaffCreate):
+    db_staff = models.Staff(**staff.dict())
+    db.add(db_staff)
+    db.commit()
+    db.refresh(db_staff)
+    return db_staff
+
+def get_staff_by_name(db: Session, Name:str):
+    return db.query(models.Staff).filter(models.Staff.Name = Name).first()
+
+def update_staff_by_name(db: Session, Name:str, staff_update: schemas.StaffUpdate):
+    staff = db.query(models.Staff).filter(models.Staff.Name == Name).first()
+
+    if not staff:
+        return None
     
+    staff.Name = staff_update.Name
+    staff.Contact = staff_update.Contact
+    staff.Email = staff_update.Email
+    staff.Password = staff_update.Password
+    staff.StaffRoleID = staff_update.StaffRoleID
+    staff.HospitalID = staff_update.HospitalID
+
+    db.commit()
+    db.refresh(staff)
+
+    return staff
+
+def delete_staff_by_name(db: Session, Name:str):
+    db_staff = db.query(models.Staff).filter(models.Staff.Name = Name).first()
+    if db_staff:
+        db.delete(db_staff)
+        db.commit()
+        return True
+    return False
 
 
  

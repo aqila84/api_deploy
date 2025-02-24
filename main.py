@@ -132,24 +132,46 @@ def update_user_job_by_name(Name:str,userjob:schemas.UserUpdateJob, db:Session =
 
 #Hospital
 @app.post("/hospital/post", response_model=schemas.HospitalBase, tags=["Hospital"])
-def create_hospital(user:schemas.HospitalCreate, db:Session = Depends(get_db)):
+def create_hospital(hospital:schemas.HospitalCreate, db:Session = Depends(get_db)):
     return crud.create_hospital(db, hospital)
 
 @app.get("/hospital/get", tags=["Hospital"])
 def get_hospital_by_name(HospitalName:str, db: Session = Depends(get_db)):
     return crud.get_hospital_by_name(db, HospitalName)
 
-@app.put("/hospital/update", tags="Hospital")
+@app.put("/hospital/update", tags=["Hospital"])
 def update_hospital_by_name(HospitalName:str, hospitalupdate:schemas.HospitalUpdate, db: Session = Depends(get_db)):
     updated_hospital = crud.update_hospital_by_name(db, HospitalName, hospitalupdate)
-    if not update_hospital:
+    if not updated_hospital:
         raise HTTPException(status_code=404, detail="Hospital does not exist")
-    return update_hospital
+    return updated_hospital
 
 @app.delete("/hospital/delete", tags=["Hospital"])
 def delete_hospital_by_name(HospitalName:str, db: Session = Depends(get_db)):
     crud.delete_hospital_by_name(db, HospitalName)
     return {"message": "Hospital Successfully Deleted"}
+
+#Staff
+@app.post("/staff/post", response_model=schemas.StaffBase, tags=["Staff"])
+def create_staff(staff:schemas.StaffCreate, db: Session = Depends(get_db)):
+    return crud.create_staff(db, staff)
+
+@app.get("/staff/get", tags=["Staff"])
+def get_staff_by_name(Name:str, db: Session = Depends(get_db)):
+    return crud.get_staff_by_name(db, Name)
+
+@app.get("/staff/update", tags=["Staff"])
+def update_staff_by_name(Name:str, staffupdate:schemas.StaffUpdate, db: Session = Depends(get_db)):
+    updated_staff = crud.update_staff_by_name(db, Name, staffupdate)
+    if not updated_staff:
+        raise HTTPException(status_code=404, detail="Staff does not exist")
+    return updated_staff
+
+@app.delete("/staff/delete", tags=["Staff"])
+def delete_staff_by_name(Name:str, db: Session = Depends(get_db)):
+    crud.delete_staff_by_name(db, Name)
+    return {"message": "Staff Successfully Deleted"}
+
 
 # Minio File
 @app.post("/uploadfile", tags=["File"])
