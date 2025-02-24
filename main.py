@@ -137,7 +137,10 @@ def create_hospital(hospital:schemas.HospitalCreate, db:Session = Depends(get_db
 
 @app.get("/hospital/get", tags=["Hospital"])
 def get_hospital_by_name(HospitalName:str, db: Session = Depends(get_db)):
-    return crud.get_hospital_by_name(db, HospitalName)
+    hospital =  crud.get_hospital_by_name(db, HospitalName)
+    if not hospital:
+        raise HTTPException(status_code=404, detail="Hospital not found")
+    return hospital
 
 @app.put("/hospital/update", tags=["Hospital"])
 def update_hospital_by_name(HospitalName:str, hospitalupdate:schemas.HospitalUpdate, db: Session = Depends(get_db)):
@@ -158,9 +161,12 @@ def create_staff(staff:schemas.StaffCreate, db: Session = Depends(get_db)):
 
 @app.get("/staff/get", tags=["Staff"])
 def get_staff_by_name(Name:str, db: Session = Depends(get_db)):
-    return crud.get_staff_by_name(db, Name)
+    staff = crud.get_staff_by_name(db, Name)
+    if not staff:
+        raise HTTPException(status_code=404, detail="Staff not found")
+    return staff
 
-@app.get("/staff/update", tags=["Staff"])
+@app.put("/staff/update", tags=["Staff"])
 def update_staff_by_name(Name:str, staffupdate:schemas.StaffUpdate, db: Session = Depends(get_db)):
     updated_staff = crud.update_staff_by_name(db, Name, staffupdate)
     if not updated_staff:
@@ -170,6 +176,9 @@ def update_staff_by_name(Name:str, staffupdate:schemas.StaffUpdate, db: Session 
 @app.delete("/staff/delete", tags=["Staff"])
 def delete_staff_by_name(Name:str, db: Session = Depends(get_db)):
     crud.delete_staff_by_name(db, Name)
+    deleted = crud.delete_staff_by_name(db, Name)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Staff not found")
     return {"message": "Staff Successfully Deleted"}
 
 

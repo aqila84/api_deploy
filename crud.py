@@ -116,7 +116,7 @@ def create_hospital(db: Session, hospital: schemas.HospitalCreate):
     return db_hospital
 
 def get_hospital_by_name(db: Session, HospitalName:str):
-    return db.query(models.Hospital).filter(models.Hospital.HospitalName = HospitalName).first()
+    return db.query(models.Hospital).filter(models.Hospital.HospitalName == HospitalName).first()
 
 def update_hospital_by_name(db: Session, HospitalName:str, hospital_update: schemas.HospitalUpdate):
     hospital = db.query(models.Hospital).filter(models.Hospital.HospitalName == HospitalName).first()
@@ -146,27 +146,36 @@ def delete_hospital_by_name(db: Session, HospitalName:str):
 
 #staff
 def create_staff(db: Session, staff: schemas.StaffCreate):
-    db_staff = models.Staff(**staff.dict())
+    hashed_password = bcrypt.hashpw(staff.Password.encode(), bcrypt.gensalt()).decode()
+    db_staff = models.Staff(**staff.model_dump(exclude={"Password"}), Password=hashed_password)
     db.add(db_staff)
     db.commit()
     db.refresh(db_staff)
     return db_staff
 
 def get_staff_by_name(db: Session, Name:str):
-    return db.query(models.Staff).filter(models.Staff.Name = Name).first()
+    return db.query(models.Staff).filter(models.Staff.Name == Name).first()
 
 def update_staff_by_name(db: Session, Name:str, staff_update: schemas.StaffUpdate):
     staff = db.query(models.Staff).filter(models.Staff.Name == Name).first()
 
     if not staff:
         return None
+
+    update_data = staff_update.model_dump(exclude_unset=True)
     
-    staff.Name = staff_update.Name
-    staff.Contact = staff_update.Contact
-    staff.Email = staff_update.Email
-    staff.Password = staff_update.Password
-    staff.StaffRoleID = staff_update.StaffRoleID
-    staff.HospitalID = staff_update.HospitalID
+    if "Password" in update_data:
+        update_data["Password"] = bcrypt.hashpw(update_data["Password"].encode(), bcrypt.gensalt()).decode()
+
+    for key, value in update_data.items():
+        setattr(staff, key, value)
+    
+    # staff.Name = staff_update.Name
+    # staff.Contact = staff_update.Contact
+    # staff.Email = staff_update.Email
+    # staff.Password = staff_update.Password
+    # staff.StaffRoleID = staff_update.StaffRoleID
+    # staff.HospitalID = staff_update.HospitalID
 
     db.commit()
     db.refresh(staff)
@@ -174,7 +183,7 @@ def update_staff_by_name(db: Session, Name:str, staff_update: schemas.StaffUpdat
     return staff
 
 def delete_staff_by_name(db: Session, Name:str):
-    db_staff = db.query(models.Staff).filter(models.Staff.Name = Name).first()
+    db_staff = db.query(models.Staff).filter(models.Staff.Name == Name).first()
     if db_staff:
         db.delete(db_staff)
         db.commit()
