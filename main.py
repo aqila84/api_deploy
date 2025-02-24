@@ -65,6 +65,7 @@ def patch_hospital():
 # @app.post('/user/post', response_model=schemas.UserBase, tags=["Users"])
 # def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
+#UserRole
 @app.post('/userrole/post', response_model=schemas.UserRoleBase, tags=["Role"])
 def create_user_role(userrole: schemas.UserRoleCreate, db: Session = Depends(get_db)):
     return crud.create_user_role(db,userrole)
@@ -91,7 +92,8 @@ def update_user_role_by_id(id:int, userroleupdate:schemas.UserRoleUpdate, db: Se
     if not updated_user:
         raise HTTPException(status_code=404, detail="User does not exist")
     return updated_user
-    
+
+#User    
 @app.put("/user/update", tags=["User"])
 def update_user_by_name(Name:str, userupdate:schemas.UserUpdate, db: Session = Depends(get_db)):
     updated_user = crud.update_user_by_name(db, Name, userupdate)
@@ -106,11 +108,11 @@ def update_user_address_by_name(Name:str, userupdate:schemas.UserUpdateAddress, 
         raise HTTPException(status_code=404, detail="User does not exist")
     return updated_user
 
-
 @app.delete("/user/delete", tags=["User"])
 def delete_user_by_name(Name:str, db: Session = Depends(get_db)):
     crud.delete_user_by_name(db, Name)
     return {"message": "User Successfully Deleted"}
+
 
 @app.post("/user/post", response_model=schemas.UserBase,tags=["User"] )
 def create_user(user:schemas.UserCreate, db:Session =Depends(get_db)):
@@ -120,13 +122,34 @@ def create_user(user:schemas.UserCreate, db:Session =Depends(get_db)):
 @app.get("/user/get", tags=["User"])
 def get_user_by_name(Name:str,db:Session =Depends(get_db)):
     return crud.get_user_by_name(db,Name)
-    
+ 
 @app.patch('/user/patch', tags=["User"])
 def update_user_job_by_name(Name:str,userjob:schemas.UserUpdateJob, db:Session =Depends(get_db)):
     updated_job = crud.update_user_job_by_name(db,Name,userjob)
     if not updated_job:
         raise HTTPException(status_code=404, detail="User does not exist")
     return updated_job
+
+#Hospital
+@app.post("/hospital/post", response_model=schemas.HospitalBase, tags=["Hospital"])
+def create_hospital(user:schemas.HospitalCreate, db:Session = Depends(get_db)):
+    return crud.create_hospital(db, hospital)
+
+@app.get("/hospital/get", tags=["Hospital"])
+def get_hospital_by_name(HospitalName:str, db: Session = Depends(get_db)):
+    return crud.get_hospital_by_name(db, HospitalName)
+
+@app.put("/hospital/update", tags="Hospital")
+def update_hospital_by_name(HospitalName:str, hospitalupdate:schemas.HospitalUpdate, db: Session = Depends(get_db)):
+    updated_hospital = crud.update_hospital_by_name(db, HospitalName, hospitalupdate)
+    if not update_hospital:
+        raise HTTPException(status_code=404, detail="Hospital does not exist")
+    return update_hospital
+
+@app.delete("/hospital/delete", tags=["Hospital"])
+def delete_hospital_by_name(HospitalName:str, db: Session = Depends(get_db)):
+    crud.delete_hospital_by_name(db, HospitalName)
+    return {"message": "Hospital Successfully Deleted"}
 
 # Minio File
 @app.post("/uploadfile", tags=["File"])

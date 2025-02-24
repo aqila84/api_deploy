@@ -58,6 +58,9 @@ class HospitalBase(BaseModel):
 class HospitalCreate(HospitalBase):
     pass
 
+class HospitalUpdate(HospitalBase):
+    pass
+
 class HospitalResponse(HospitalBase):
     HospitalID: int
 

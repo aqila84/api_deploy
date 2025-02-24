@@ -17,6 +17,7 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.refresh(db_user)
     return db_user
 
+
 def create_user_role(db: Session, userrole: schemas.UserRoleCreate):
     db_user_role = models.UserRole(**userrole.dict())
     db.add(db_user_role)
@@ -48,8 +49,10 @@ def delete_user_by_name(db: Session, Name:str):
         return True
     return False
 
+
 def get_user_by_name(db:Session, Name:str):
     return db.query(models.User).filter(models.User.Name == Name).first()
+
 
 def update_user_role_by_id(db: Session, UserRoleID:int, user_role_update: schemas.UserRoleUpdate):
     userrole = db.query(models.UserRole).filter(models.UserRole.UserRoleID == UserRoleID).first()
@@ -103,4 +106,42 @@ def update_user_job_by_name(db: Session, Name:str, user_update: schemas.UserUpda
     db.refresh(user)
 
     return user
+
+#hospital
+def create_hospital(db: Session, hospital: schemas.HospitalCreate):
+    db_hospital = models.Hospital(**hospital.dict())
+    db.add(db_hospital)
+    db.commit()
+    db.refresh(db_hospital)
+    return db_hospital
+
+def get_hospital_by_name(db: Session, HospitalName:str):
+    return db.query(models.Hospital).filter(models.Hospital.HospitalName = HospitalName).first()
+
+def update_hospital_by_name(db: Session, HospitalName:str, hospital_update: schemas.HospitalUpdate):
+    hospital = db.query(models.Hospital).filter(models.Hospital.HospitalName == HospitalName).first()
+
+    if not hospital:
+        return None
+
+    hospital.HospitalName = hospital_update.HospitalName
+    hospital.Address = hospital_update.Address
+    hospital.TTEQuota = hospital_update.TTEQuota
+    hospital.UsedTTEQuota = hospital_update.UsedTTEQuota
+
+    db.commit()
+    db.refresh(hospital)
+
+    return hospital
+
+def delete_hospital_by_name(db: Session, HospitalName:str):
+    db_hospital = db.query(models.hospital).filter(models.Hospital.HospitalName == HospitalName).first()
+    if db_hospital:
+        db.delete(db_hospital)
+        db.commit()
+        return True
+    return False
+    
+
+
  
