@@ -9,7 +9,7 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "user"
     
-    UserID = Column(UUID, primary_key=True)
+    UserID = Column(UUID(as_uuid=True), primary_key=True)
     Name = Column(String(50))
     DateofBirth = Column(DateTime)
     Contact = Column(Integer())
@@ -18,8 +18,8 @@ class User(Base):
     UserRoleID = Column(Integer(), ForeignKey("userrole.UserRoleID"))
     
     userrole = relationship("UserRole", back_populates="user")
-    documents = relationship("Documents",back_populates="documents")
-    signature = relationship("Signature",back_populates="signature",uselist=False)
+    documents = relationship("Documents",back_populates="user")
+    signature = relationship("Signature",back_populates="user",uselist=False)
     
 # UserRole class
 class UserRole(Base):
@@ -42,10 +42,10 @@ class Documents(Base):
     Status = Column(String(20))
     CreatedAt = Column(DateTime)
     SignedAt = Column(DateTime)
-    UserID = Column(Integer(),ForeignKey("user.UserID"))
+    UserID = Column(UUID(as_uuid=True),ForeignKey("user.UserID"))
 
     #Relationship to user 
-    user = relationship("User",back_populates="user")
+    user = relationship("User",back_populates="documents")
 
 #Signature class
 class Signature(Base):
@@ -54,9 +54,9 @@ class Signature(Base):
     SignatureID = Column(Integer(),primary_key=True)
     SignatureData = Column(String(100))
     ExpiryDate = Column(DateTime)
-    UserID = Column(Integer(),ForeignKey("user.UserID"),unique=True)
+    UserID = Column(UUID(as_uuid=True),ForeignKey("user.UserID"),unique=True)
 
 
-    user = relationship("User",back_populates="user")
+    user = relationship("User",back_populates="signature")
 
     

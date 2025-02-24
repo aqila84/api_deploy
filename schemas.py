@@ -47,3 +47,34 @@ class UserResponse(UserBase):
     class Config:
         orm_mode = True
 
+# Documents Schema
+class DocumentBase(BaseModel):
+    DocumentID: int
+    FileName: str
+    Filetype: str
+    StoragePath: str
+    Status: str
+    CreatedAt: Optional[datetime]
+    SignedAt: Optional[datetime]
+    UserID: UUID
+
+class DocumentCreate(DocumentBase):
+    pass  # Used when creating a new document
+
+class DocumentResponse(DocumentBase):
+    class Config:
+        orm_mode = True
+
+# Signature Schema
+class SignatureBase(BaseModel):
+    SignatureID: int
+    SignatureData: str
+    ExpiryDate: Optional[datetime]
+    UserID: UUID
+
+class SignatureCreate(SignatureBase):
+    pass  # Used when creating a new signature
+
+class SignatureResponse(SignatureBase):
+    class Config:
+        orm_mode = True
