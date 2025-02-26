@@ -6,10 +6,11 @@ import bcrypt
 
 Base = declarative_base()
 
+# User class
 class User(Base):
     __tablename__ = "user"
     
-    UserID = Column(UUID, primary_key=True)
+    UserID = Column(UUID(as_uuid=True), primary_key=True)
     Name = Column(String(50))
     DateofBirth = Column(DateTime)
     Contact = Column(Integer())
@@ -20,7 +21,10 @@ class User(Base):
     
     userrole = relationship("UserRole", back_populates="user")
     hospital = relationship("Hospital", back_populates="user")
+    documents = relationship("Documents",back_populates="user")
+    signature = relationship("Signature",back_populates="user",uselist=False)
     
+# UserRole class
 class UserRole(Base):
     __tablename__ = "userrole" 
     
@@ -81,3 +85,32 @@ class Log(Base):
     StaffID = Column(Integer(), ForeignKey("staff.StaffID"))
 
     staff = relationship("Staff", back_populates="log")
+#Documents class
+class Documents(Base):
+    __tablename__ = "document"
+
+    DocumentID = Column(Integer(),primary_key=True)
+    FileName = Column(String(100))
+    Filetype = Column(String(20))
+    StoragePath = Column(String(50))
+    Status = Column(String(20))
+    CreatedAt = Column(DateTime)
+    SignedAt = Column(DateTime)
+    UserID = Column(UUID(as_uuid=True),ForeignKey("user.UserID"))
+
+    #Relationship to user 
+    user = relationship("User",back_populates="documents")
+
+#Signature class
+class Signature(Base):
+    __tablename__ = "signature"
+
+    SignatureID = Column(Integer(),primary_key=True)
+    SignatureData = Column(String(100))
+    ExpiryDate = Column(DateTime)
+    UserID = Column(UUID(as_uuid=True),ForeignKey("user.UserID"),unique=True)
+
+
+    user = relationship("User",back_populates="signature")
+
+    

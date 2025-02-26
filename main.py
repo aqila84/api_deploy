@@ -1,6 +1,7 @@
+from http.client import HTTPException
 from requests import Session
-from Routes import role
-from database import SessionLocal
+from Routes import Documents, Signature
+from database import SessionLocal,get_db
 from objstr import *
 from fastapi import FastAPI, File, UploadFile
 import schemas
@@ -22,12 +23,7 @@ async def db_session_middleware(request: Request, call_next):
         request.state.db.close()
     return response
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+
         
         
 app.add_middleware(
@@ -131,17 +127,30 @@ def update_user_job_by_name(Name:str,userjob:schemas.UserUpdateJob, db:Session =
         raise HTTPException(status_code=404, detail="User does not exist")
     return updated_job
 
-# Minio File
-@app.post("/uploadfile", tags=["File"])
-def upload_file(file: UploadFile):
-    upload_document("documents", file)    
-    return {"message":"Upload Successful!"}
+#Document Endpoint
 
-@app.get("/getfile", tags=["File"])
-def get_file(object_name:str):
-    return get_document("documents", object_name)
+app.include_router(Documents.router, tags=["Document"])
 
-@app.delete("/deletefile", tags=["File"])
-def delete_file(object_name:str):
-    return delete_document("documents", object_name)
+
+#Signature Endpoint
+
+app.include_router(Signature.router, tags=["Signature"])
+
+
+
+
+
+# # Minio File
+# @app.post("/uploadfile", tags=["File"])
+# def upload_file(file: UploadFile):
+#     upload_document("documents", file)    
+#     return {"message":"Upload Successful!"}
+
+# @app.get("/getfile", tags=["File"])
+# def get_file(object_name:str):
+#     return get_document("documents", object_name)
+
+# @app.delete("/deletefile", tags=["File"])
+# def delete_file(object_name:str):
+#     return delete_document("documents", object_name)
 

@@ -2,7 +2,7 @@ from fastapi.responses import FileResponse, StreamingResponse
 from minio import Minio
 from fastapi import *
 import mimetypes
-from database import client
+# from database import client
 
 # def upload_document_path(bucket_name:str, object_name:str, file_name, content_type:str):
 #     return client.fput_object(bucket_name, object_name, file_name, content_type)

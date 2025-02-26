@@ -1,7 +1,7 @@
 from typing import List, Optional
 from uuid import UUID
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 # UserRole Schemas
 class UserRoleBase(BaseModel):
@@ -52,8 +52,8 @@ class UserResponse(UserBase):
 class HospitalBase(BaseModel):
     HospitalName: str
     Address: str
-    TTEQuota: conint(ge=0)
-    UsedTTEQuota: conint(ge=0)
+    TTEQuota: int
+    UsedTTEQuota: int
 
 class HospitalCreate(HospitalBase):
     pass
@@ -68,7 +68,7 @@ class HospitalResponse(HospitalBase):
 #Staff Schemas
 class StaffBase(BaseModel):
     Name: str
-    Contact: conint(ge=0)
+    Contact: int
     Email: EmailStr
     StaffRoleID: int
 
@@ -112,3 +112,40 @@ class LogResponse(LogBase):
     class Config:
         from_attributes = True
 
+# Documents Schema
+class DocumentBase(BaseModel):
+    DocumentID: int
+    FileName: str
+    Filetype: str
+    StoragePath: str
+    Status: str
+    CreatedAt: Optional[datetime]
+    SignedAt: Optional[datetime]
+    UserID: UUID
+
+class DocumentCreate(DocumentBase):
+    pass  # Used when creating a new document
+
+class DocumentUpdate(DocumentBase):
+    pass
+
+class DocumentResponse(DocumentBase):
+    class Config:
+        orm_mode = True
+
+# Signature Schema
+class SignatureBase(BaseModel):
+    SignatureID: int
+    SignatureData: str
+    ExpiryDate: Optional[datetime]
+    UserID: UUID
+
+class SignatureCreate(SignatureBase):
+    pass  # Used when creating a new signature
+
+class SignatureUpdate(SignatureBase):
+    pass
+
+class SignatureResponse(SignatureBase):
+    class Config:
+        orm_mode = True
