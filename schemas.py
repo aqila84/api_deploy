@@ -61,6 +61,9 @@ class DocumentBase(BaseModel):
 class DocumentCreate(DocumentBase):
     pass  # Used when creating a new document
 
+class DocumentUpdate(DocumentBase):
+    pass
+
 class DocumentResponse(DocumentBase):
     class Config:
         orm_mode = True
@@ -74,6 +77,9 @@ class SignatureBase(BaseModel):
 
 class SignatureCreate(SignatureBase):
     pass  # Used when creating a new signature
+
+class SignatureUpdate(SignatureBase):
+    pass
 
 class SignatureResponse(SignatureBase):
     class Config:
