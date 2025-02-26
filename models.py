@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, ForeignKey, UUID, Boolean
 import bcrypt
+from datetime import datetime
 
 Base = declarative_base()
 
@@ -57,12 +58,12 @@ class Staff(Base):
     staffrole = relationship("StaffRole", back_populates="staff")
     log = relationship("Log", back_populates="staff", cascade="all, delete")
 
-    def set_password(self, plain_password: str):
-        salt = bcrypt.gensalt()
-        self.Password = bcrypt.hashpw(plain_password.encode(), salt).decode()
+    # def set_password(self, plain_password: str):
+    #     salt = bcrypt.gensalt()
+    #     self.Password = bcrypt.hashpw(plain_password.encode(), salt).decode()
 
-    def check_password(self, plain_password: str) -> bool:
-        return bcrypt.checkpw(plain_password.encode(), self.Password.encode())
+    # def check_password(self, plain_password: str) -> bool:
+    #     return bcrypt.checkpw(plain_password.encode(), self.Password.encode())
 
 class StaffRole(Base):
     __tablename__ = "staffrole"
@@ -77,7 +78,7 @@ class Log(Base):
 
     LogID = Column(Integer(), primary_key=True)
     Action = Column(String(100))
-    Timestamp = Column(DateTime)
-    StaffID = Column(Integer(), ForeignKey("staff.StaffID"))
+    Timestamp = Column(DateTime, default=datetime.utcnow, nullable=False)
+    StaffID = Column(Integer(), ForeignKey("staff.StaffID"), nullable=False)
 
     staff = relationship("Staff", back_populates="log")

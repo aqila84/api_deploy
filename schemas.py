@@ -52,8 +52,8 @@ class UserResponse(UserBase):
 class HospitalBase(BaseModel):
     HospitalName: str
     Address: str
-    TTEQuota: conint(ge=0)
-    UsedTTEQuota: conint(ge=0)
+    TTEQuota: int
+    UsedTTEQuota: int
 
 class HospitalCreate(HospitalBase):
     pass
@@ -71,8 +71,8 @@ class HospitalResponse(HospitalBase):
 #Staff Schemas
 class StaffBase(BaseModel):
     Name: str
-    Contact: conint(ge=0)
-    Email: EmailStr
+    Contact: int
+    Email: str
     StaffRoleID: int
 
 class StaffCreate(StaffBase):
@@ -106,7 +106,6 @@ class StaffRoleResponse(StaffRoleBase):
 #Log Schemas
 class LogBase(BaseModel):
     Action: str
-    Timestamp: datetime
     StaffID: int
 
 class LogCreate(LogBase):
@@ -114,6 +113,7 @@ class LogCreate(LogBase):
 
 class LogResponse(LogBase):
     LogID: int
+    Timestamp: datetime
     
     class Config:
         from_attributes = True

@@ -8,6 +8,8 @@ from typing import List
 import models
 import schemas
 import uuid
+import bcrypt
+from datetime import datetime
 
 def create_user(db: Session, user: schemas.UserCreate):
     user_uuid = uuid.uuid4()
@@ -134,14 +136,13 @@ def update_hospital_by_name(db: Session, HospitalName:str, hospital_update: sche
 
     return hospital
   
-
 def delete_hospital_by_name(db: Session, HospitalName:str):
-    db_hospital = db.query(models.hospital).filter(models.Hospital.HospitalName == HospitalName).first()
-    if db_hospital:
-        db.delete(db_hospital)
-        db.commit()
-        return True
-    return False
+    hospital = db.query(models.Hospital).filter(models.Hospital.HospitalName == HospitalName).first()
+    if not hospital:
+        return None
+    db.delete(hospital)
+    db.commit()
+    return hospital
 
 
 #staff
@@ -202,7 +203,7 @@ def get_all_staff_roles(db: Session):
     return db.query(models.StaffRole).all()
 
 def get_staff_role_by_id(db: Session, StaffRoleID: int):
-    return db.query(models.StaffRole).filter(models.StaffRole.StaffRoleID == staff_role_id).first()
+    return db.query(models.StaffRole).filter(models.StaffRole.StaffRoleID == StaffRoleID).first()
 
 def update_staff_role_by_id(db: Session, StaffRoleID: int, staffrole_update: schemas.StaffRoleCreate):
     staffrole = db.query(models.StaffRole).filter(models.StaffRole.StaffRoleID == StaffRoleID).first()
@@ -220,4 +221,25 @@ def delete_staff_role_by_name(db: Session, StaffRoleName: str):
     db.delete(staffrole)
     db.commit()
     return staffrole
+
+#log
+def create_log(db: Session, log: schemas.LogCreate):
+    new_log = models.Log(**log.dict())
+    db.add(new_log)
+    db.commit()
+    db.refresh(new_log)
+    return new_log
+
+def get_all_log(db: Session):
+    return db.query(models.Log).all()
+
+def get_log_by_staff_id(db: Session, StaffID: int):
+    return db.query(models.Log).filter(models.Log.StaffID == StaffID).all()
  
+def delete_log_by_id(db: Session, LogID: int):
+    log = db.query(models.Log).filter(models.Log.LogID == LogID).first()
+    if not log:
+        return None
+    db.delete(log)
+    db.commit()
+    return log

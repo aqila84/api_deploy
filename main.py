@@ -1,12 +1,12 @@
 from requests import Session
 from database import SessionLocal
-from objstr import *
-from fastapi import FastAPI, File, UploadFile
+# from objstr import *
+from fastapi import FastAPI, File, UploadFile, Request, Depends, Response
 import schemas
 from fastapi.middleware.cors import CORSMiddleware
 import crud
 from typing import List
-
+import bcrypt
 
 # Declare FastAPI
 app = FastAPI()
@@ -151,7 +151,9 @@ def update_hospital_by_name(HospitalName:str, hospitalupdate:schemas.HospitalUpd
 
 @app.delete("/hospital/delete", tags=["Hospital"])
 def delete_hospital_by_name(HospitalName:str, db: Session = Depends(get_db)):
-    crud.delete_hospital_by_name(db, HospitalName)
+    deleted = crud.delete_hospital_by_name(db, HospitalName)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Hospital not found")
     return {"message": "Hospital Successfully Deleted"}
 
 #Staff
@@ -186,10 +188,6 @@ def delete_staff_by_name(Name:str, db: Session = Depends(get_db)):
 def create_staff_role(staffrole: schemas.StaffRoleCreate, db: Session = Depends(get_db)):
     return crud.create_staff_role(db, staffrole)
 
-@app.get("/staffrole/get", response_model=list[schemas.StaffRoleResponse], tags=["StaffRole"])
-def get_all_staff_roles(db: Session = Depends(get_db)):
-    return crud.get_all_staff_roles(db)
-
 @app.get("/staffrole/get/{StaffRoleID}", response_model=schemas.StaffRoleResponse, tags=["StaffRole"])
 def get_staff_role_by_id(StaffRoleID: int, db: Session = Depends(get_db)):
     staffrole = crud.get_staff_role_by_id(db, StaffRoleID)
@@ -210,6 +208,29 @@ def delete_staff_role_by_name(StaffRoleName: str, db: Session = Depends(get_db))
     if not deleted_role:
         raise HTTPException(status_code=404, detail="StaffRole not found")
     return {"message": "StaffRole successfully deleted"}
+
+#log
+@app.post("/log/post", response_model=schemas.LogResponse, tags=["Log"])
+def create_log(log: schemas.LogCreate, db: Session = Depends(get_db)):
+    return crud.create_log(db, log)
+
+@app.get("/log/getall", tags=["Log"])
+def get_all_log(db: Session = Depends(get_db)):
+    return crud.get_all_log(db)
+
+@app.get("/log/get/{StaffID}", response_model=List[schemas.LogResponse], tags=["Log"])
+def get_log_by_staff_id(StaffID: int, db: Session = Depends(get_db)):
+    log = crud.get_log_by_staff_id(db, StaffID)
+    if not log:
+        raise HTTPException(status_code=404, detail="No logs found for this StaffID")
+    return log
+
+@app.delete("/log/delete", tags=["Log"])
+def delete_log_by_id(LogID: int, db: Session = Depends(get_db)):
+    deleted_log = crud.delete_log_by_id(db, LogID)
+    if not deleted_log:
+        raise HTTPException(status_code=404, detail="Log not found")
+    return {"message": "Log successfully deleted"}
 
 # Minio File
 # @app.post("/uploadfile", tags=["File"])
