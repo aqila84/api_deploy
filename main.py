@@ -1,7 +1,7 @@
 from http.client import HTTPException
 from requests import Session
-from TTE_BE.Routes import Documents, Signature
-from database import SessionLocal
+from Routes import Documents, Signature
+from database import SessionLocal,get_db
 from objstr import *
 from fastapi import FastAPI, File, UploadFile
 import schemas
@@ -23,12 +23,7 @@ async def db_session_middleware(request: Request, call_next):
         request.state.db.close()
     return response
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+
         
         
 app.add_middleware(
