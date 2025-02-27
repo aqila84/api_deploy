@@ -58,6 +58,9 @@ class HospitalBase(BaseModel):
 class HospitalCreate(HospitalBase):
     pass
 
+class HospitalUpdate(HospitalBase):
+    pass
+
 class HospitalResponse(HospitalBase):
     HospitalID: int
 
@@ -75,6 +78,9 @@ class StaffBase(BaseModel):
 class StaffCreate(StaffBase):
     Password: str
     HospitalID: int
+
+class StaffUpdate(StaffBase):
+    pass
 
 class StaffResponse(StaffBase):
     StaffID: int
@@ -100,7 +106,6 @@ class StaffRoleResponse(StaffRoleBase):
 #Log Schemas
 class LogBase(BaseModel):
     Action: str
-    Timestamp: datetime
     StaffID: int
 
 class LogCreate(LogBase):
@@ -108,6 +113,7 @@ class LogCreate(LogBase):
 
 class LogResponse(LogBase):
     LogID: int
+    Timestamp: datetime
     
     class Config:
         from_attributes = True
@@ -149,3 +155,56 @@ class SignatureUpdate(SignatureBase):
 class SignatureResponse(SignatureBase):
     class Config:
         orm_mode = True
+#Transaction Schemas
+class TransactionBase(BaseModel):
+    HospitalID: int
+    amount: int
+    issuer: str
+    payment_type: str
+    transaction_time: datetime
+    status: str
+    created_at: datetime
+    update_at: datetime
+
+class TransactionCreate(TransactionBase):
+    pass
+
+class TransactionUpdate(BaseModel):
+    amount: int
+    issuer: str 
+    payment_type: str 
+    status: str 
+    update_at: datetime = datetime.utcnow()
+
+class TransactionResponse(TransactionBase):
+    TransactionID: int
+    class Config:
+        from_attributes = True
+
+#Coordinate Schemas
+class CoordinateBase(BaseModel):
+    llx: int
+    lly: int
+    urx: int
+    ury: int
+    page: int
+    status: str
+    created_at: datetime
+    update_at: datetime
+
+class CoordinateCreate(CoordinateBase):
+    pass
+
+class CoordinateUpdate(BaseModel):
+    llx: int 
+    lly: int 
+    urx: int
+    ury: int 
+    page: int 
+    status: str 
+    update_at: datetime = datetime.utcnow()
+
+class CoordinateResponse(CoordinateBase):
+    CoordinateID: int
+    class Config:
+        from_attributes = True

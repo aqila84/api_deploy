@@ -1,14 +1,14 @@
 from http.client import HTTPException
 from requests import Session
 from Routes import Documents, Signature
+from router import hospital, log, staff, staffrole, user, userrole
 from database import SessionLocal,get_db
 from objstr import *
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Request, Depends, Response
 import schemas
 from fastapi.middleware.cors import CORSMiddleware
 import crud
 from typing import List
-
 
 # Declare FastAPI
 app = FastAPI()
@@ -64,68 +64,23 @@ app.include_router(role.router, tags=["User Role"])
 # @app.post('/user/post', response_model=schemas.UserBase, tags=["Users"])
 # def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
-@app.post('/userrole/post', response_model=schemas.UserRoleBase, tags=["Role"])
-def create_user_role(userrole: schemas.UserRoleCreate, db: Session = Depends(get_db)):
-    return crud.create_user_role(db,userrole)
+#User
+app.include_router(user.router, tags=["User"])
 
-@app.get("/userrole/get/{id}", response_model=schemas.UserRoleBase, tags=["Role"])
-def get_user_role_by_id(id:int, db: Session = Depends(get_db)):
-    return crud.get_user_role_by_id(db,id)
+#UserRole
+app.include_router(userrole.router, tags=["Role"])
 
+#Hospital
+app.include_router(hospital.router, tags=["Hospital"])
 
-@app.delete("/userrole/delete",tags=["Role"])
-def delete_user_role_by_name(UserRoleName:str,db:Session =Depends(get_db)):
-    deleted_user = crud.delete_user_role_by_name(db,UserRoleName)
-    if not deleted_user:
-        raise HTTPException(status_code=404, detail="User does not exist")
-    return {"message": "Role succesfully deleted"}
+#Staff
+app.include_router(staff.router, tags=["Staff"])
 
-@app.get("/userrole/getall", tags=["Role"])
-def get_user_role(db: Session = Depends(get_db)):
-    return crud.get_user_role(db)
+#staffrole
+app.include_router(staffrole.router, tags=["StaffRole"])
 
-@app.put("/userrole/update", tags=["Role"])
-def update_user_role_by_id(id:int, userroleupdate:schemas.UserRoleUpdate, db: Session = Depends(get_db)):
-    updated_user = crud.update_user_role_by_id(db, id, userroleupdate)
-    if not updated_user:
-        raise HTTPException(status_code=404, detail="User does not exist")
-    return updated_user
-    
-@app.put("/user/update", tags=["User"])
-def update_user_by_name(Name:str, userupdate:schemas.UserUpdate, db: Session = Depends(get_db)):
-    updated_user = crud.update_user_by_name(db, Name, userupdate)
-    if not updated_user:
-        raise HTTPException(status_code=404, detail="User does not exist")
-    return updated_user
-
-@app.patch("/user/patch/address", tags=["User"])
-def update_user_address_by_name(Name:str, userupdate:schemas.UserUpdateAddress, db: Session = Depends(get_db)):
-    updated_user = crud.update_user_address_by_name(db, Name, userupdate)
-    if not updated_user:
-        raise HTTPException(status_code=404, detail="User does not exist")
-    return updated_user
-
-
-@app.delete("/user/delete", tags=["User"])
-def delete_user_by_name(Name:str, db: Session = Depends(get_db)):
-    crud.delete_user_by_name(db, Name)
-    return {"message": "User Successfully Deleted"}
-
-@app.post("/user/post", response_model=schemas.UserBase,tags=["User"] )
-def create_user(user:schemas.UserCreate, db:Session =Depends(get_db)):
-    return crud.create_user(db,user)
-    # return {"message":"user has been created"}
-
-@app.get("/user/get", tags=["User"])
-def get_user_by_name(Name:str,db:Session =Depends(get_db)):
-    return crud.get_user_by_name(db,Name)
-    
-@app.patch('/user/patch', tags=["User"])
-def update_user_job_by_name(Name:str,userjob:schemas.UserUpdateJob, db:Session =Depends(get_db)):
-    updated_job = crud.update_user_job_by_name(db,Name,userjob)
-    if not updated_job:
-        raise HTTPException(status_code=404, detail="User does not exist")
-    return updated_job
+#log
+app.include_router(log.router, tags=["Log"])
 
 #Document Endpoint
 

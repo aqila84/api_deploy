@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, ForeignKey, UUID, Boolean
 import bcrypt
+from datetime import datetime
 
 Base = declarative_base()
 
@@ -45,6 +46,7 @@ class Hospital(Base):
     
     user = relationship("User", back_populates="hospital")
     staff = relationship("Staff", back_populates="hospital")
+    transaction = relationship("Transaction",  back_populates="hospital")
 
 class Staff(Base):
     __tablename__ = "staff"
@@ -61,12 +63,12 @@ class Staff(Base):
     staffrole = relationship("StaffRole", back_populates="staff")
     log = relationship("Log", back_populates="staff", cascade="all, delete")
 
-    def set_password(self, plain_password: str):
-        salt = bcrypt.gensalt()
-        self.Password = bcrypt.hashpw(plain_password.encode(), salt).decode()
+    # def set_password(self, plain_password: str):
+    #     salt = bcrypt.gensalt()
+    #     self.Password = bcrypt.hashpw(plain_password.encode(), salt).decode()
 
-    def check_password(self, plain_password: str) -> bool:
-        return bcrypt.checkpw(plain_password.encode(), self.Password.encode())
+    # def check_password(self, plain_password: str) -> bool:
+    #     return bcrypt.checkpw(plain_password.encode(), self.Password.encode())
 
 class StaffRole(Base):
     __tablename__ = "staffrole"
@@ -81,8 +83,8 @@ class Log(Base):
 
     LogID = Column(Integer(), primary_key=True)
     Action = Column(String(100))
-    Timestamp = Column(DateTime)
-    StaffID = Column(Integer(), ForeignKey("staff.StaffID"))
+    Timestamp = Column(DateTime, default=datetime.utcnow, nullable=False)
+    StaffID = Column(Integer(), ForeignKey("staff.StaffID"), nullable=False)
 
     staff = relationship("Staff", back_populates="log")
 #Documents class
@@ -114,3 +116,32 @@ class Signature(Base):
     user = relationship("User",back_populates="signature")
 
     
+
+class Transaction(Base):
+    __tablename__ = "transaction"
+
+    TransactionID = Column(Integer(), primary_key=True)
+    HospitalID = Column(Integer(), ForeignKey("hospital.HospitalID"))
+    amount = Column(Integer())
+    issuer = Column(String(100))
+    payment_type = Column(String(100))
+    transaction_time = Column(DateTime())
+    status = Column(String(100))
+    created_at = Column(DateTime())
+    update_at = Column(DateTime())
+
+    hospital = relationship("Hospital", back_populates="transaction")
+
+
+class coordinate(Base):
+    __tablename__ = "coordinate"
+
+    CoordinateID = Column(Integer(), primary_key=True)
+    llx = Column(Integer())
+    lly = Column(Integer())
+    urx = Column(Integer())
+    ury = Column(Integer())
+    page = Column(Integer())
+    status = Column(String(100))
+    created_at = Column(DateTime())
+    update_at = Column(DateTime())
