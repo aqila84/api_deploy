@@ -28,7 +28,7 @@ def update_staff_role_by_id(StaffRoleID: int, staffrole_update: schemas.StaffRol
         raise HTTPException(status_code=404, detail="StaffRole not found")
     return updated_role
 
-@router.delete("/staffrole/delete", tags=["StaffRole"])
+@router.delete("/staffrole/delete/{StaffRoleName}", tags=["StaffRole"])
 def delete_staff_role_by_name(StaffRoleName: str, db: Session = Depends(get_db)):
     deleted_role = crud.delete_staff_role_by_name(db, StaffRoleName)
     if not deleted_role:

@@ -25,7 +25,7 @@ def get_log_by_staff_id(StaffID: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No logs found for this StaffID")
     return log
 
-@router.delete("/log/delete", tags=["Log"])
+@router.delete("/log/delete/{LogID}", tags=["Log"])
 def delete_log_by_id(LogID: int, db: Session = Depends(get_db)):
     deleted_log = crud.delete_log_by_id(db, LogID)
     if not deleted_log:

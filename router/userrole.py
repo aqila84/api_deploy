@@ -22,14 +22,14 @@ def get_user_role(db: Session = Depends(get_db)):
 def get_user_role_by_id(id:int, db: Session = Depends(get_db)):
     return crud.get_user_role_by_id(db,id)
 
-@router.put("/userrole/update", tags=["Role"])
+@router.put("/userrole/update/{id}", tags=["Role"])
 def update_user_role_by_id(id:int, userroleupdate:schemas.UserRoleUpdate, db: Session = Depends(get_db)):
     updated_user = crud.update_user_role_by_id(db, id, userroleupdate)
     if not updated_user:
         raise HTTPException(status_code=404, detail="User does not exist")
     return updated_user
 
-@router.delete("/userrole/delete",tags=["Role"])
+@router.delete("/userrole/delete/{UserRoleName}",tags=["Role"])
 def delete_user_role_by_name(UserRoleName:str,db:Session =Depends(get_db)):
     deleted_user = crud.delete_user_role_by_name(db,UserRoleName)
     if not deleted_user:

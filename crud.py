@@ -135,13 +135,28 @@ def update_hospital_by_name(db: Session, HospitalName:str, hospital_update: sche
     db.refresh(hospital)
 
     return hospital
-  
+
 def delete_hospital_by_name(db: Session, HospitalName:str):
     hospital = db.query(models.Hospital).filter(models.Hospital.HospitalName == HospitalName).first()
+
+    print(hospital)
+
     if not hospital:
         return None
+
     db.delete(hospital)
     db.commit()
+    return hospital
+
+def delete_hospital_by_id(db: Session, id:int):
+    hospital = db.query(models.Hospital).filter(models.Hospital.HospitalID == id).first()
+
+    if not hospital:
+        return None
+
+    db.delete(hospital)
+    db.commit()
+
     return hospital
 
 

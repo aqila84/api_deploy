@@ -78,16 +78,16 @@ app.include_router(staffrole.router, tags=["StaffRole"])
 app.include_router(log.router, tags=["Log"])
 
 # Minio File
-# @app.post("/uploadfile", tags=["File"])
-# def upload_file(file: UploadFile):
-#     upload_document("documents", file)    
-#     return {"message":"Upload Successful!"}
+@app.post("/uploadfile", tags=["File"])
+def upload_file(file: UploadFile):
+    upload_document("documents", file)    
+    return {"message":"Upload Successful!"}
 
-# @app.get("/getfile", tags=["File"])
-# def get_file(object_name:str):
-#     return get_document("documents", object_name)
+@app.get("/getfile", tags=["File"])
+def get_file(object_name:str):
+    return get_document("documents", object_name)
 
-# @app.delete("/deletefile", tags=["File"])
-# def delete_file(object_name:str):
-#     return delete_document("documents", object_name)
+@app.delete("/deletefile", tags=["File"])
+def delete_file(object_name:str):
+    return delete_document("documents", object_name)
 
