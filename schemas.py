@@ -118,3 +118,56 @@ class LogResponse(LogBase):
     class Config:
         from_attributes = True
 
+#Transaction Schemas
+class TransactionBase(BaseModel):
+    HospitalID: int
+    amount: int
+    issuer: str
+    payment_type: str
+    transaction_time: datetime
+    status: str
+    created_at: datetime
+    update_at: datetime
+
+class TransactionCreate(TransactionBase):
+    pass
+
+class TransactionUpdate(BaseModel):
+    amount: int
+    issuer: str 
+    payment_type: str 
+    status: str 
+    update_at: datetime = datetime.utcnow()
+
+class TransactionResponse(TransactionBase):
+    TransactionID: int
+    class Config:
+        from_attributes = True
+
+#Coordinate Schemas
+class CoordinateBase(BaseModel):
+    llx: int
+    lly: int
+    urx: int
+    ury: int
+    page: int
+    status: str
+    created_at: datetime
+    update_at: datetime
+
+class CoordinateCreate(CoordinateBase):
+    pass
+
+class CoordinateUpdate(BaseModel):
+    llx: int 
+    lly: int 
+    urx: int
+    ury: int 
+    page: int 
+    status: str 
+    update_at: datetime = datetime.utcnow()
+
+class CoordinateResponse(CoordinateBase):
+    CoordinateID: int
+    class Config:
+        from_attributes = True

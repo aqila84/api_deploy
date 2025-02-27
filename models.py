@@ -42,6 +42,7 @@ class Hospital(Base):
     
     user = relationship("User", back_populates="hospital")
     staff = relationship("Staff", back_populates="hospital")
+    transaction = relationship("Transaction",  back_populates="hospital")
 
 class Staff(Base):
     __tablename__ = "staff"
@@ -82,3 +83,32 @@ class Log(Base):
     StaffID = Column(Integer(), ForeignKey("staff.StaffID"), nullable=False)
 
     staff = relationship("Staff", back_populates="log")
+
+class Transaction(Base):
+    __tablename__ = "transaction"
+
+    TransactionID = Column(Integer(), primary_key=True)
+    HospitalID = Column(Integer(), ForeignKey("hospital.HospitalID"))
+    amount = Column(Integer())
+    issuer = Column(String(100))
+    payment_type = Column(String(100))
+    transaction_time = Column(DateTime())
+    status = Column(String(100))
+    created_at = Column(DateTime())
+    update_at = Column(DateTime())
+
+    hospital = relationship("Hospital", back_populates="transaction")
+
+
+class coordinate(Base):
+    __tablename__ = "coordinate"
+
+    CoordinateID = Column(Integer(), primary_key=True)
+    llx = Column(Integer())
+    lly = Column(Integer())
+    urx = Column(Integer())
+    ury = Column(Integer())
+    page = Column(Integer())
+    status = Column(String(100))
+    created_at = Column(DateTime())
+    update_at = Column(DateTime())
