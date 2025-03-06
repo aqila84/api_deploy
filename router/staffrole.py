@@ -14,6 +14,10 @@ router = APIRouter()
 def create_staff_role(staffrole: schemas.StaffRoleCreate, db: Session = Depends(get_db)):
     return crud.create_staff_role(db, staffrole)
 
+@router.get("/staffrole/get", response_model=List[schemas.StaffRoleBase])
+def get_staff_role(db: Session = Depends(get_db)):
+    return crud.get_staff_role(db)
+
 @router.get("/staffrole/get/{StaffRoleID}", response_model=schemas.StaffRoleResponse, tags=["StaffRole"])
 def get_staff_role_by_id(StaffRoleID: int, db: Session = Depends(get_db)):
     staffrole = crud.get_staff_role_by_id(db, StaffRoleID)

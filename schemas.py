@@ -27,19 +27,19 @@ class UserBase(BaseModel):
     Address: str
     Job: str
     UserRoleID: int
-
-class UserUpdateAddress(BaseModel):
-    Address: str
+    HospitalID: Optional[int]
 
 class UserCreate(UserBase):
     pass
 
-class UserUpdate(UserBase):
-    pass
-
-class UserUpdateJob(BaseModel):
-    Job: str
-
+class UserUpdate(BaseModel):
+    Name: Optional[str]
+    DateofBirth: Optional[datetime] 
+    Contact: Optional[int]
+    Address: Optional[str] 
+    Job: Optional[str] 
+    UserRoleID: Optional[int] 
+    HospitalID: Optional[int] 
 class UserResponse(UserBase):
     UserID: UUID
     role: UserRoleResponse
@@ -120,28 +120,30 @@ class LogResponse(LogBase):
 
 # Documents Schema
 class DocumentBase(BaseModel):
-    DocumentID: int
     FileName: str
     Filetype: str
     StoragePath: str
     Status: str
-    CreatedAt: Optional[datetime]
+    CreatedAt: datetime
     SignedAt: Optional[datetime]
     UserID: UUID
+    StaffID: int
+    SignatureID: Optional[int]
 
 class DocumentCreate(DocumentBase):
-    pass  # Used when creating a new document
+    pass 
 
 class DocumentUpdate(DocumentBase):
     pass
 
 class DocumentResponse(DocumentBase):
+    DocumentID: int
+
     class Config:
         orm_mode = True
 
 # Signature Schema
 class SignatureBase(BaseModel):
-    SignatureID: int
     SignatureData: str
     ExpiryDate: Optional[datetime]
     UserID: UUID
@@ -153,8 +155,11 @@ class SignatureUpdate(SignatureBase):
     pass
 
 class SignatureResponse(SignatureBase):
+    SignatureID: int
+
     class Config:
         orm_mode = True
+
 #Transaction Schemas
 class TransactionBase(BaseModel):
     HospitalID: int
@@ -163,17 +168,17 @@ class TransactionBase(BaseModel):
     payment_type: str
     transaction_time: datetime
     status: str
-    created_at: datetime
-    update_at: datetime
+    created_at: datetime = datetime.utcnow()
+    update_at: datetime = datetime.utcnow()
 
 class TransactionCreate(TransactionBase):
     pass
 
 class TransactionUpdate(BaseModel):
-    amount: int
-    issuer: str 
-    payment_type: str 
-    status: str 
+    amount: Optional[int]
+    issuer: Optional[str] 
+    payment_type: Optional[str] 
+    status: Optional[str] 
     update_at: datetime = datetime.utcnow()
 
 class TransactionResponse(TransactionBase):
@@ -183,25 +188,26 @@ class TransactionResponse(TransactionBase):
 
 #Coordinate Schemas
 class CoordinateBase(BaseModel):
+    DocumentID: int
     llx: int
     lly: int
     urx: int
     ury: int
     page: int
     status: str
-    created_at: datetime
-    update_at: datetime
+    created_at: datetime = datetime.utcnow()
+    update_at: datetime = datetime.utcnow()
 
 class CoordinateCreate(CoordinateBase):
     pass
 
 class CoordinateUpdate(BaseModel):
-    llx: int 
-    lly: int 
-    urx: int
-    ury: int 
-    page: int 
-    status: str 
+    llx: Optional[int]
+    lly: Optional[int] 
+    urx: Optional[int]
+    ury: Optional[int] 
+    page: Optional[int] 
+    status: Optional[str] 
     update_at: datetime = datetime.utcnow()
 
 class CoordinateResponse(CoordinateBase):

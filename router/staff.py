@@ -14,6 +14,10 @@ router = APIRouter()
 def create_staff(staff:schemas.StaffCreate, db: Session = Depends(get_db)):
     return crud.create_staff(db, staff)
 
+@router.get("/staff/get", response_model=List[schemas.StaffBase])
+def get_staff(db: Session = Depends(get_db)):
+    return crud.get_staff(db)
+
 @router.get("/staff/get/{Name}", tags=["Staff"])
 def get_staff_by_name(Name:str, db: Session = Depends(get_db)):
     staff = crud.get_staff_by_name(db, Name)

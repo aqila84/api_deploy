@@ -22,7 +22,7 @@ class User(Base):
     
     userrole = relationship("UserRole", back_populates="user")
     hospital = relationship("Hospital", back_populates="user")
-    documents = relationship("Documents",back_populates="user")
+    document = relationship("Documents",back_populates="user")
     signature = relationship("Signature",back_populates="user",uselist=False)
     
 # UserRole class
@@ -62,6 +62,7 @@ class Staff(Base):
     hospital = relationship("Hospital", back_populates="staff")
     staffrole = relationship("StaffRole", back_populates="staff")
     log = relationship("Log", back_populates="staff", cascade="all, delete")
+    document = relationship("Documents", back_populates="staff")
 
     # def set_password(self, plain_password: str):
     #     salt = bcrypt.gensalt()
@@ -87,7 +88,7 @@ class Log(Base):
     StaffID = Column(Integer(), ForeignKey("staff.StaffID"), nullable=False)
 
     staff = relationship("Staff", back_populates="log")
-#Documents class
+
 class Documents(Base):
     __tablename__ = "document"
 
@@ -99,11 +100,14 @@ class Documents(Base):
     CreatedAt = Column(DateTime)
     SignedAt = Column(DateTime)
     UserID = Column(UUID(as_uuid=True),ForeignKey("user.UserID"))
+    StaffID = Column(Integer(), ForeignKey("staff.StaffID"), nullable=False)
+    SignatureID = Column(Integer(), ForeignKey("signature.SignatureID"))
 
-    #Relationship to user 
-    user = relationship("User",back_populates="documents")
+    user = relationship("User",back_populates="document")
+    coordinate = relationship("Coordinate", back_populates="document")
+    staff = relationship("Staff", back_populates="document")
+    signature = relationship("Signature", back_populates="document")
 
-#Signature class
 class Signature(Base):
     __tablename__ = "signature"
 
@@ -112,10 +116,8 @@ class Signature(Base):
     ExpiryDate = Column(DateTime)
     UserID = Column(UUID(as_uuid=True),ForeignKey("user.UserID"),unique=True)
 
-
     user = relationship("User",back_populates="signature")
-
-    
+    document = relationship("Documents", back_populates="signature")
 
 class Transaction(Base):
     __tablename__ = "transaction"
@@ -132,11 +134,11 @@ class Transaction(Base):
 
     hospital = relationship("Hospital", back_populates="transaction")
 
-
-class coordinate(Base):
+class Coordinate(Base):
     __tablename__ = "coordinate"
 
     CoordinateID = Column(Integer(), primary_key=True)
+    DocumentID = Column(Integer(), ForeignKey("document.DocumentID"))
     llx = Column(Integer())
     lly = Column(Integer())
     urx = Column(Integer())
@@ -145,3 +147,6 @@ class coordinate(Base):
     status = Column(String(100))
     created_at = Column(DateTime())
     update_at = Column(DateTime())
+
+    document = relationship("Documents",back_populates="coordinate")
+

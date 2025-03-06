@@ -1,7 +1,7 @@
 from http.client import HTTPException
 from requests import Session
 from Routes import Documents, Signature
-from router import hospital, log, staff, staffrole, user, userrole
+from router import hospital, log, staff, staffrole, user, userrole, transaction, coordinate
 from database import SessionLocal,get_db
 from objstr import *
 from fastapi import FastAPI, File, UploadFile, Request, Depends, Response
@@ -24,8 +24,6 @@ async def db_session_middleware(request: Request, call_next):
     return response
 
 
-        
-        
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://localhost:8000", "http://localhost:3000"],
@@ -58,7 +56,7 @@ def update_hospital():
 def patch_hospital():
     return {"message": "Update Hospital"}
 
-app.include_router(role.router, tags=["User Role"])
+# app.include_router(role.router, tags=["User Role"])
 
 
 # @app.post('/user/post', response_model=schemas.UserBase, tags=["Users"])
@@ -83,14 +81,16 @@ app.include_router(staffrole.router, tags=["StaffRole"])
 app.include_router(log.router, tags=["Log"])
 
 #Document Endpoint
-
 app.include_router(Documents.router, tags=["Document"])
 
-
 #Signature Endpoint
-
 app.include_router(Signature.router, tags=["Signature"])
 
+#transaction
+app.include_router(transaction.router, tags=["Transaction"])
+
+#coordinate
+app.include_router(coordinate.router, tags=["Coordinate"])
 
 
 

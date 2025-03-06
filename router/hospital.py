@@ -13,6 +13,10 @@ router = APIRouter()
 def create_hospital(hospital:schemas.HospitalCreate, db:Session = Depends(get_db)):
     return crud.create_hospital(db, hospital)
 
+@router.get("/hospital/get", response_model=List[schemas.HospitalBase])
+def get_hospital(db: Session = Depends(get_db)):
+    return crud.get_hospital(db)
+
 @router.get("/hospital/get/{HospitalName}", tags=["Hospital"])
 def get_hospital_by_name(HospitalName:str, db: Session = Depends(get_db)):
     hospital =  crud.get_hospital_by_name(db, HospitalName)

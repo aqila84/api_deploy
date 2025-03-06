@@ -65,16 +65,16 @@ def update_user_role_by_id(db: Session, UserRoleID:int, user_role_update: schema
     
     return userrole
 
-def update_user_address_by_name(db: Session, Name:str, user_update: schemas.UserUpdateAddress):
-    user = db.query(models.User).filter(models.User.Name == Name).first()
-    if not user:
-        return None
-    user.Address = user_update.Address
+# def update_user_address_by_name(db: Session, Name:str, user_update: schemas.UserUpdateAddress):
+#     user = db.query(models.User).filter(models.User.Name == Name).first()
+#     if not user:
+#         return None
+#     user.Address = user_update.Address
 
-    db.commit()
-    db.refresh(user)
+#     db.commit()
+#     db.refresh(user)
 
-    return user
+#     return user
         
 def update_user_by_name(db: Session, Name:str, user_update: schemas.UserUpdate):
     user = db.query(models.User).filter(models.User.Name == Name).first()
@@ -94,18 +94,18 @@ def update_user_by_name(db: Session, Name:str, user_update: schemas.UserUpdate):
 
     return user
 
-def update_user_job_by_name(db: Session, Name:str, user_update: schemas.UserUpdateJob):
-    user = db.query(models.User).filter(models.User.Name == Name).first()
+# def update_user_job_by_name(db: Session, Name:str, user_update: schemas.UserUpdateJob):
+#     user = db.query(models.User).filter(models.User.Name == Name).first()
     
-    if not user:
-        return None
+#     if not user:
+#         return None
     
-    user.Job = user_update.Job
+#     user.Job = user_update.Job
     
-    db.commit()
-    db.refresh(user)
+#     db.commit()
+#     db.refresh(user)
 
-    return user
+#     return user
 
 #hospital
 def create_hospital(db: Session, hospital: schemas.HospitalCreate):
@@ -248,9 +248,16 @@ def get_all_log(db: Session):
 
 def get_log_by_staff_id(db: Session, StaffID: int):
     return db.query(models.Log).filter(models.Log.StaffID == StaffID).all()
- 
-# Documents 
 
+def delete_log_by_id(db: Session, LogID: int):
+    log = db.query(models.Log).filter(models.Log.LogID == LogID).first()
+    if not log:
+        return None
+    db.delete(log)
+    db.commit()
+    return log
+
+# Documents 
 def create_document(db: Session, documents : schemas.DocumentCreate):
     db_document = models.Documents(**documents.dict())
     db.add(db_document)
@@ -298,7 +305,6 @@ def delete_document_by_name(db: Session, FileName:str):
     return False
 
 #Signature
-
 def create_signature(db: Session, signature : schemas.SignatureCreate):
     db_signature = models.Signature(**signature.dict())
     db.add(db_signature)
@@ -335,10 +341,82 @@ def delete_signature_by_id(db: Session, id:int):
         db.commit()
         return True
     return False
-def delete_log_by_id(db: Session, LogID: int):
-    log = db.query(models.Log).filter(models.Log.LogID == LogID).first()
-    if not log:
-        return None
-    db.delete(log)
+
+#Transaction
+def create_transaction(db: Session, transaction: schemas.TransactionCreate):
+    new_transaction = models.Transaction(**transaction.dict())
+    db.add(new_transaction)
     db.commit()
-    return log
+    db.refresh(new_transaction)
+    return new_transaction
+
+def get_transaction(db: Session):
+    return db.query(models.Transaction).all()
+
+def get_transaction_by_hospital(db: Session, HospitalID: int):
+    return db.query(models.Transaction).filter(models.Transaction.HospitalID == HospitalID).all()
+
+def update_transaction(db: Session, TransactionID: int, transaction_data: schemas.TransactionUpdate):
+    db_transaction = db.query(models.Transaction).filter(models.Transaction.TransactionID == TransactionID).first()
+    if not db_transaction:
+        return None
+    for key, value in transaction_data.dict(exclude_unset=True).items():
+        setattr(db_transaction, key, value)
+    db.commit()
+    db.refresh(db_transaction)
+    return db_transaction
+
+def delete_transaction_by_id(db: Session, TransactionID: int):
+    db_transacion = db.query(models.Transaction).filter(models.Transaction.TransactionID == TransactionID).first()
+    if db_transacion:
+        db.delete(db_transacion)
+        db.commit()
+        return True
+    return False
+
+#Coordinate
+def create_coordinate(db: Session, coordinate: schemas.CoordinateCreate):
+    new_coordinate = models.Coordinate(**coordinate.dict())
+    db.add(new_coordinate)
+    db.commit()
+    db.refresh(new_coordinate)
+    return new_coordinate
+
+def get_coordinate(db: Session):
+    return db.query(models.Coordinate).all()
+
+def get_coordinate_by_document(db: Session, DocumentID: int):
+    return db.query(models.Coordinate).filter(models.Coordinate.DocumentID == DocumentID).all()
+
+def update_coordinate_by_id(db: Session, CoordinateID: int, coordinate_update: schemas.CoordinateUpdate):
+    db_coordinate = db.query(models.Coordinate).filter(models.Coordinate.CoordinateID == CoordinateID).first()
+    if not db_coordinate:
+        return None
+    for key, value in coordinate_update.dict(exclude_unset=True).items():
+        setattr(db_coordinate, key, value)
+    db.commit()
+    db.refresh(db_coordinate)
+    return db_coordinate
+
+def delete_coordinate_by_id(db: Session, CoordinateID: int):
+    db_coordinate = db.query(models.Coordinate).filter(models.Coordinate.CoordinateID == CoordinateID).first()
+    if db_coordinate:
+        db.delete(db_coordinate)
+        db.commit()
+        return True
+    return False
+
+#get
+def get_user(db: Session):
+    return db.query(models.User).all()
+
+def get_hospital(db: Session):
+    return db.query(models.Hospital).all()
+
+def get_staff(db: Session):
+    return db.query(models.Staff).all()
+
+def get_staff_role(db: Session):
+    return db.query(models.StaffRole).all()
+
+
