@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from dotenv import *
 import os
-from minio import Minio
+# from minio import Minio
 from models import Base
 
 load_dotenv()
