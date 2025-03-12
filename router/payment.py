@@ -89,14 +89,17 @@ async def midtrans_callback(data: dict, db: Session = Depends(get_db)):
     transaction = db.query(models.Transaction).filter(models.Transaction.TransactionID == order_id).first()
     
     if transaction:
+        print("Transaction exists")
         transaction.status = transaction_status
         transaction.update_at = datetime.now()
 
         if transaction_status in ["settlement", "success", "capture"]: 
+            print("Transaction is valid")
             hospital = db.query(models.Hospital).filter(models.Hospital.HospitalID == transaction.HospitalID).first()
             if hospital:
                 print("Hospital exists")
-                hospital.TTEQuota += transaction.quota
+                # hospital.TTEQuota += transaction.quota
+                hospital.TTEQuota = (hospital.TTEQuota or 0) + transaction.quota
                 db.commit()
                 db.refresh(hospital)
             else:
