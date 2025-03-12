@@ -124,6 +124,7 @@ class Transaction(Base):
 
     TransactionID = Column(Integer(), primary_key=True)
     HospitalID = Column(Integer(), ForeignKey("hospital.HospitalID"))
+    quota = Column(Integer())
     amount = Column(Integer())
     issuer = Column(String(100))
     payment_type = Column(String(100))

@@ -82,6 +82,10 @@ class StaffCreate(StaffBase):
 class StaffUpdate(StaffBase):
     pass
 
+class StaffLogin(BaseModel):
+    Email: EmailStr
+    Password: str
+
 class StaffResponse(StaffBase):
     StaffID: int
     HospitalID: int
@@ -163,6 +167,7 @@ class SignatureResponse(SignatureBase):
 #Transaction Schemas
 class TransactionBase(BaseModel):
     HospitalID: int
+    quota: int
     amount: int
     issuer: str
     payment_type: str
@@ -175,6 +180,7 @@ class TransactionCreate(TransactionBase):
     pass
 
 class TransactionUpdate(BaseModel):
+    quota: Optional[int]
     amount: Optional[int]
     issuer: Optional[str] 
     payment_type: Optional[str] 
