@@ -419,4 +419,35 @@ def get_staff(db: Session):
 def get_staff_role(db: Session):
     return db.query(models.StaffRole).all()
 
+# #otp
+# def generate_otp():
+#     """Generate OTP 6 digit angka"""
+#     return str(random.randint(100000, 999999))
 
+# def create_otp(db: Session, user_id: int):
+#     """Buat dan simpan OTP untuk user"""
+#     otp_code = generate_otp()
+#     expiry_time = datetime.utcnow() + timedelta(minutes=5)  # Expire dalam 5 menit
+
+#     new_otp = OTP(UserID=user_id, Code=otp_code, Expiry=expiry_time)
+#     db.add(new_otp)
+#     db.commit()
+#     db.refresh(new_otp)
+
+#     return new_otp
+
+# def verify_otp(db: Session, user_id: int, otp_code: str):
+#     """Cek apakah OTP valid"""
+#     otp = db.query(OTP).filter(OTP.UserID == user_id, OTP.Code == otp_code).first()
+    
+#     if not otp:
+#         return False, "OTP salah atau tidak ditemukan"
+    
+#     if otp.Expiry < datetime.utcnow():
+#         return False, "OTP telah kedaluwarsa"
+
+#     # Hapus OTP setelah berhasil verifikasi (opsional)
+#     db.delete(otp)
+#     db.commit()
+
+#     return True, "OTP valid"

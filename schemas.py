@@ -220,3 +220,21 @@ class CoordinateResponse(CoordinateBase):
     CoordinateID: int
     class Config:
         from_attributes = True
+
+#Otp Schemas
+class OtpBase(BaseModel):
+    OtpID: int
+    UserID: int
+    Code: str 
+    created_at: datetime = datetime.utcnow()
+    expired_at: datetime
+
+class OtpCreate(BaseModel):
+    pass
+
+class OtpResponse(OtpBase):
+    OtpID: int 
+    created_at: datetime
+
+    class Config:
+        from_attributes = True

@@ -94,7 +94,7 @@ async def midtrans_callback(data: dict, db: Session = Depends(get_db)):
         transaction.update_at = datetime.now()
 
         if transaction_status in ["settlement", "success", "capture"]: 
-            print("Transaction is valid")
+            # print("Transaction is valid")
             hospital = db.query(models.Hospital).filter(models.Hospital.HospitalID == transaction.HospitalID).first()
             if hospital:
                 print("Hospital exists")

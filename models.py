@@ -24,6 +24,7 @@ class User(Base):
     hospital = relationship("Hospital", back_populates="user")
     document = relationship("Documents",back_populates="user")
     signature = relationship("Signature",back_populates="user",uselist=False)
+    otp = relationship("Otp", back_populates="user", cascade="all, delete-orphan")
     
 # UserRole class
 class UserRole(Base):
@@ -150,4 +151,16 @@ class Coordinate(Base):
     update_at = Column(DateTime())
 
     document = relationship("Documents",back_populates="coordinate")
+
+class Otp(Base):
+    __tablename__ = "otp"
+
+    OtpID = Column(Integer(), primary_key=True)
+    UserID = Column(UUID(as_uuid=True),ForeignKey("user.UserID"),nullable=False)
+    Code = Column(String(10))
+    created_at = Column(DateTime())
+    expired_at = Column(DateTime())
+
+    user = relationship("User", back_populates="otp")
+
 
